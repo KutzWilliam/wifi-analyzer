@@ -13,8 +13,8 @@ import { MeasurementModule } from './measurement/measurement.module';
       username: 'postgres',
       password: '1234',
       database: 'analyzer',
-      entities: [Measurement], // adicione suas entidades aqui
-      synchronize: true, // apenas para desenvolvimento
+      entities: [Measurement],
+      synchronize: true,
     }),
     MeasurementModule,
   ],
