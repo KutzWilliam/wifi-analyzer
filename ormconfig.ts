@@ -8,5 +8,5 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
     password: '1234',
     database: 'analyzer',
     entities: [__dirname + '/../**/*.entity.{js,ts}'],
-    synchronize: true, // Não usar em produção, pois pode perder dados
+    synchronize: true,
 };
