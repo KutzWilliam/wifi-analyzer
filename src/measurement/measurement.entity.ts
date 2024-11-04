@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { User } from 'src/auth/user.entity';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 
 @Entity('measurements')
 export class Measurement {
@@ -22,4 +23,7 @@ export class Measurement {
 
     @Column()
     interference: number;
+
+    @ManyToOne(() => User, user => user.measurements, { onDelete: 'CASCADE' })
+    user: User;
 }

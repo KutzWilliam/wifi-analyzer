@@ -1,11 +1,14 @@
-import { Controller, Get, Post, Body, Param, Patch, Delete } from '@nestjs/common';
+// measurement.controller.ts
+import { Controller, Get, Post, Body, Param, Patch, Delete, UseGuards, Request } from '@nestjs/common';
 import { MeasurementService } from './measurement.service';
 import { CreateMeasurementDto } from './dto/create-measurement.dto';
 import { UpdateMeasurementDto } from './dto/update-measurement.dto';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('measurements')
+@UseGuards(JwtAuthGuard) 
 export class MeasurementController {
-    constructor(private readonly measurementService: MeasurementService) { }
+    constructor(private readonly measurementService: MeasurementService) {}
 
     @Get()
     async findAll() {
@@ -18,8 +21,11 @@ export class MeasurementController {
     }
 
     @Post()
-    async create(@Body() createMeasurementDto: CreateMeasurementDto) {
-        return this.measurementService.create(createMeasurementDto);
+    async create(@Body() createMeasurementDto: CreateMeasurementDto, @Request() req) {
+        const userId = req.user.userId;
+
+        const measurementWithUser = { ...createMeasurementDto, userId };
+        return this.measurementService.create(measurementWithUser);
     }
 
     @Patch(':id')
