@@ -26,23 +26,24 @@ export class UserService {
     }
 
     async create(createUserDto: CreateUserDto) {
-        const { username, password } = createUserDto;
+        const { username, password, email } = createUserDto;
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const user = this.userRepository.create({
             username,
             password: hashedPassword,
+            email
         });
 
         return this.userRepository.save(user);
     }
 
     async login(loginDto: LoginDto) {
-        const { username, password } = loginDto;
-        const user = await this.userRepository.findOne({ where: { username } });
+        const { email, password } = loginDto;
+        const user = await this.userRepository.findOne({ where: { email } });
 
         if (!user || !(await bcrypt.compare(password, user.password))) {
-            throw new UnauthorizedException('Invalid credentials');
+            throw new UnauthorizedException('Email ou senha inválido(s).');
         }
 
         const payload = { username: user.username, sub: user.id };

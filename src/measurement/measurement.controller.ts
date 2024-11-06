@@ -6,35 +6,40 @@ import { UpdateMeasurementDto } from './dto/update-measurement.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('measurements')
-@UseGuards(JwtAuthGuard) 
+@UseGuards(JwtAuthGuard)
 export class MeasurementController {
     constructor(private readonly measurementService: MeasurementService) {}
 
     @Get()
-    async findAll() {
-        return this.measurementService.findAll();
+    async findAll(@Request() req) {
+        const userId = req.user.userId;
+        const measurements = await this.measurementService.findAll(+userId);
+        return { measurements };
     }
 
     @Get(':id')
     async findOne(@Param('id') id: string) {
-        return this.measurementService.findOne(+id);
+        const measurement = await this.measurementService.findOne(+id);
+        return { measurement };
     }
 
     @Post()
     async create(@Body() createMeasurementDto: CreateMeasurementDto, @Request() req) {
         const userId = req.user.userId;
-
         const measurementWithUser = { ...createMeasurementDto, userId };
-        return this.measurementService.create(measurementWithUser);
+        const measurement = await this.measurementService.create(measurementWithUser);
+        return { measurement }; 
     }
 
     @Patch(':id')
     async update(@Param('id') id: string, @Body() updateMeasurementDto: UpdateMeasurementDto) {
-        return this.measurementService.update(+id, updateMeasurementDto);
+        const updatedMeasurement = await this.measurementService.update(+id, updateMeasurementDto);
+        return { measurement: updatedMeasurement }; 
     }
 
     @Delete(':id')
     async remove(@Param('id') id: string) {
-        return this.measurementService.remove(+id);
+        await this.measurementService.remove(+id);
+        return { message: 'Medição removida com sucesso.' }; 
     }
 }

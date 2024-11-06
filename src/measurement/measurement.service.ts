@@ -4,25 +4,40 @@ import { Repository } from 'typeorm';
 import { Measurement } from './measurement.entity';
 import { CreateMeasurementDto } from './dto/create-measurement.dto';
 import { UpdateMeasurementDto } from './dto/update-measurement.dto';
+import { User } from 'src/auth/user.entity';
 
 @Injectable()
 export class MeasurementService {
     constructor(
         @InjectRepository(Measurement)
         private measurementRepository: Repository<Measurement>,
+
+        @InjectRepository(User)
+        private userRepository: Repository<User>,
     ) { }
 
-    async findAll(): Promise<Measurement[]> {
-        return this.measurementRepository.find();
+    async create(createMeasurementDto: CreateMeasurementDto): Promise<Measurement> {
+        const { userId, ...measurementData } = createMeasurementDto;
+
+        const user = await this.userRepository.findOneBy({ id: userId });
+        if (!user) {
+            throw new Error(`Usuário não encontrado.`);
+        }
+
+        const measurement = this.measurementRepository.create({
+            ...measurementData,
+            user,
+        });
+
+        return this.measurementRepository.save(measurement);
+    }
+
+    async findAll(userId: number): Promise<Measurement[]> {
+        return this.measurementRepository.findBy({ user: { id: userId } });
     }
 
     async findOne(id: number): Promise<Measurement> {
         return this.measurementRepository.findOneBy({ id });
-    }
-
-    async create(createMeasurementDto: CreateMeasurementDto): Promise<Measurement> {
-        const measurement = this.measurementRepository.create(createMeasurementDto);
-        return this.measurementRepository.save(measurement);
     }
 
     async update(id: number, updateMeasurementDto: UpdateMeasurementDto): Promise<Measurement> {

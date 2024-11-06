@@ -5,4 +5,5 @@ export class UpdateMeasurementDto {
     readonly speed2_4GHz?: number;
     readonly speed5GHz?: number;
     readonly interference?: number;
+    readonly userId: number;
 }

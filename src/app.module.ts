@@ -4,6 +4,7 @@ import { Measurement } from './measurement/measurement.entity';
 import { MeasurementModule } from './measurement/measurement.module';
 import { User } from './auth/user.entity';
 import { UserModule } from './auth/user.module';
+import { GenerativeAiModule } from './generative-ai/generative-ai.module';
 
 
 @Module({
@@ -19,7 +20,8 @@ import { UserModule } from './auth/user.module';
       synchronize: true,
     }),
     MeasurementModule,
-    UserModule
+    UserModule,
+    GenerativeAiModule
   ],
 })
 export class AppModule { }
